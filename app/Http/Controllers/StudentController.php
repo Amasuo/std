@@ -37,7 +37,7 @@ class StudentController extends BaseController
 
     public function current()
     {
-        $student = auth()->user();
+        $student = auth('api')->user();
         if (!$student) {
             return $this->failure(__('app.student.current-not-found'));
         }
@@ -54,13 +54,14 @@ class StudentController extends BaseController
         );
         $course_id = $request->get('course_id');
         $course = Course::findOrFail($course_id);
-        if ($course->students->contains(auth()->user()->id)) {
+        if ($course->students->contains(auth('api')->user()->id)) {
             return $this->failure(__('app.course.student-already-registered'));
         }
         if (!$course->isAvailable()) {
             return $this->failure(__('app.course.full'));
         }
-        $course->students()->attach(auth()->user()->id);
+        $course->students()->attach(auth('api')->user()->id);
+        $course->load('students');
         return $this->success(__('app.student.registered'), $course);
     }
 }

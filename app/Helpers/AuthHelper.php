@@ -24,8 +24,8 @@ class AuthHelper
             'email' => $input['email'],
             'password' => $input['password'],
         ];
-        if (auth()->attempt($login_credentials)) {
-            $student = auth()->user();
+        if (auth('api')->attempt($login_credentials)) {
+            $student = auth('api')->user();
             $access_token = $student->createToken('access-token')->accessToken;
             return self::generateAuthResult($access_token, $student);
         } else {
