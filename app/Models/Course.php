@@ -13,12 +13,19 @@ class Course extends Model
 
     protected $fillable = ['name', 'capacity'];
 
-    protected $hidden = ['created_at', 'updated_at'];
+    protected $hidden = ['created_at', 'updated_at', 'pivot'];
+
+    public $timestamps = false;
 
 
     /** For the many-to-many relation (check student model) */
     public function students()
     {
-        return $this->belongsToMany(Student::class);
+        return $this->belongsToMany(Student::class, 'registrations');
+    }
+
+    public function isAvailable(): bool
+    {
+        return $this->capacity > count($this->students);
     }
 }

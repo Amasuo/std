@@ -16,3 +16,16 @@ use App\Http\Controllers\AuthController;
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
+
+/** Routes under auth middleware (routes that need authentication) */
+Route::middleware('auth:api')->group(function () {
+    /** student routes */
+    Route::name('app.student')
+        ->prefix('student')
+        ->group(__DIR__ . '/api/student.php');
+
+    /** course routes */
+    Route::name('app.course')
+        ->prefix('course')
+        ->group(__DIR__ . '/api/course.php');
+});

@@ -15,11 +15,11 @@ class Student extends Authenticatable
 
     protected $fillable = ['name', 'email', 'password'];
 
-    protected $hidden = ['password', 'created_at', 'updated_at'];
+    protected $hidden = ['password', 'created_at', 'updated_at', 'pivot'];
 
     /** For the many-to-many relation (check course model) */
     public function courses()
     {
-        return $this->belongsToMany(Course::class);
+        return $this->belongsToMany(Course::class, 'registrations');
     }
 }

@@ -3,31 +3,44 @@
 namespace App\Http\Controllers;
 
 use App\Enums\HTTPHeader;
+use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
+use League\Fractal\Manager;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use League\Fractal\Resource\Collection as FractalCollection;
+use League\Fractal\Resource\Item as FractalItem;
 
 class BaseController extends Controller
 {
+    use ApiResponse;
 
+    protected $fractal;
+    protected $transformer;
 
-    protected function success($message = '', $data = [], $status = HTTPHeader::SUCCESS)
+    protected $model_id = null;
+
+    public function __construct(Request $request)
     {
-        $res = new \stdClass();
-        $res->message = $message;
-        $res->data = $data;
-        return response()->json($res, $status);
+        if (isset($request->id)) {
+            $this->model_id = $request->id;
+        }
+        $this->fractal = new Manager();
     }
 
-    /** easier to notice if it is a success or failure in the child controller */
-
-    protected function failure($message = '', $status = HTTPHeader::BAD_REQUEST)
+    protected function validateId()
     {
-        $res = new \stdClass();
-        $res->message = $message;
-        return response()->json($res, $status);
+        if (is_null($this->model_id)) {
+            $this->abort(__('app.generic.id-not-found'), HTTPHeader::NOT_FOUND);
+        }
     }
 
-    protected function abort($message = '', $status = HTTPHeader::BAD_REQUEST)
+    protected function transform($data)
     {
-        abort($status, $message);
+        if ($data instanceof EloquentCollection) {
+            $data = new FractalCollection($data, $this->transformer);
+        } else {
+            $data = new FractalItem($data, $this->transformer);
+        }
+        return json_decode($this->fractal->createData($data)->toJson());
     }
 }

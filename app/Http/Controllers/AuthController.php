@@ -6,7 +6,6 @@ use App\Enums\HTTPHeader;
 use App\Helpers\AuthHelper;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
-use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -28,15 +27,6 @@ class AuthController extends BaseController
         } else {
             return $this->failure(__('app.student.login-failure'), HTTPHeader::NOT_FOUND);
         }
-    }
-
-    public function currentUser()
-    {
-        $student = auth()->user();
-        if (!$student) {
-            return $this->failure(__('app.student.current-not-found'));
-        }
-        return $this->success(__('app.student.current-found'), $student);
     }
 
     public function logout(Request $request)
