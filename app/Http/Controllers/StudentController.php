@@ -54,14 +54,15 @@ class StudentController extends BaseController
         );
         $course_id = $request->get('course_id');
         $course = Course::findOrFail($course_id);
-        if ($course->students->contains(auth('api')->user()->id)) {
+        $student = auth('api')->user();
+        if ($course->students->contains($student->id)) {
             return $this->failure(__('app.course.student-already-registered'));
         }
         if (!$course->isAvailable()) {
             return $this->failure(__('app.course.full'));
         }
-        $course->students()->attach(auth('api')->user()->id);
-        $course->load('students');
-        return $this->success(__('app.student.registered'), $course);
+        $course->students()->attach($student->id);
+        $data = $this->transform($student);
+        return $this->success(__('app.student.registered'), $data);
     }
 }

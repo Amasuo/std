@@ -19,7 +19,7 @@ class CourseFactory extends Factory
     public function definition()
     {
         return [
-            'name' => strtoupper(Str::random(7)),
+            'name' => substr(str_shuffle('abcdefghijklmnopqrstuvwxyz'), 0, 10),
             'capacity' => $this->faker->numberBetween(
                 intval(config('consts.course.capacity_min')),
                 intval(config('consts.course.capacity_max'))
