@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\HTTPHeader;
+use App\Http\Requests\CourseRegistrationRequest;
 use App\Models\Course;
 use App\Models\Student;
 use App\Transformers\StudentTransformer;
@@ -29,8 +30,7 @@ class StudentController extends BaseController
     public function getItem(Request $request)
     {
         $this->validateId();
-        $id = $this->model_id;
-        $student = Student::findOrFail($id);
+        $student = Student::findOrFail($this->model_id);
         $data = $this->transform($student);
         return $this->success(__('app.student.get-one'), $data);
     }
@@ -45,14 +45,10 @@ class StudentController extends BaseController
         return $this->success(__('app.student.current-found'), $student);
     }
 
-    public function registerCourse(Request $request)
+    public function registerCourse(CourseRegistrationRequest $request)
     {
-        $request->validate(
-            [
-                'course_id' => 'required|integer'
-            ]
-        );
-        $course_id = $request->get('course_id');
+        $input = $request->validated();
+        $course_id = $input['course_id'];
         $course = Course::findOrFail($course_id);
         $student = auth('api')->user();
         if ($course->students->contains($student->id)) {

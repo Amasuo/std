@@ -30,8 +30,7 @@ class CourseController extends BaseController
     public function getItem(Request $request)
     {
         $this->validateId();
-        $id = $this->model_id;
-        $course = Course::findOrFail($id);
+        $course = Course::findOrFail($this->model_id);
         $data = $this->transform($course);
         return $this->success(__('app.course.get-one'), $data);
     }
@@ -48,8 +47,7 @@ class CourseController extends BaseController
     public function update(CourseRequest $request)
     {
         $this->validateId();
-        $id = $this->model_id;
-        $course = Course::findOrFail($id);
+        $course = Course::findOrFail($this->model_id);
         $input = $request->validated();
         $course->fill($input);
         $course->save();
@@ -60,8 +58,7 @@ class CourseController extends BaseController
     public function delete(Request $request)
     {
         $this->validateId();
-        $id = $this->model_id;
-        $course = Course::findOrFail($id);
+        $course = Course::findOrFail($this->model_id);
         $course->delete();
         return $this->success(__('app.course.deleted'), $course);
     }
