@@ -19,11 +19,10 @@ class StudentController extends BaseController
 
     public function getData(Request $request)
     {
-        $students = Student::all();
-        if (!$students) {
+        $data = Student::with('courses')->get();
+        if (!$data) {
             return $this->failure(__('app.student.model-not-found'), HTTPHeader::NOT_FOUND);
         }
-        $data = $this->transform($students);
         return $this->success(__('app.student.get-all'), $data);
     }
 
